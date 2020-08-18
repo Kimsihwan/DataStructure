@@ -47,12 +47,137 @@ public class LinkedList {
 		}
 		return x;
 	}
-	
+
 	public void add(int k, Object input) {
 		if (k == 0) {
 			addFirst(input);
 		} else {
-			
+			Node temp1 = node(k - 1);
+			Node temp2 = temp1.next;
+			Node newNode = new Node(input);
+			temp1.next = newNode;
+			newNode.next = temp2;
+			size++;
+			if (newNode.next == null) {
+				tail = newNode;
+			}
 		}
+	}
+
+	public String toString() {
+		if (head == null) {
+			return "[]";
+		}
+		Node temp = head;
+		String str = "[";
+
+		while (temp.next != null) {
+			str += temp.data + ", ";
+			temp = temp.next;
+		}
+
+		str += temp.data;
+
+		return str + "]";
+	}
+
+	public Object removeFirst() {
+		Node temp = head;
+		head = head.next;
+		Object returnData = temp.data;
+		temp = null;
+		size--;
+		return returnData;
+	}
+
+	public Object remove(int k) {
+		if (k == 0) {
+			return removeFirst();
+		}
+		Node temp = node(k - 1);
+		Node todoDelete = temp.next;
+		temp.next = node(k + 1);
+		Object returnDelete = todoDelete.data;
+		if (tail == todoDelete) {
+			tail = temp;
+		}
+		todoDelete = null;
+		size--;
+		return returnDelete;
+	}
+
+	public Object removeLast() {
+		return remove(size - 1);
+	}
+
+	public int size() {
+		return size;
+	}
+
+	public Object get(int k) {
+		Node temp = node(k);
+		return temp.data;
+	}
+
+	public int indexOf(Object data) {
+		Node temp = head;
+		int index = 0;
+		while (temp.data != data) {
+			temp = temp.next;
+			index++;
+			if (temp == null) {
+				return -1;
+			}
+		}
+		return index;
+	}
+
+	public ListIterator listIterator() {
+		return new ListIterator();
+	}
+
+	public class ListIterator {
+
+		private Node next;
+		private Node lastReturned;
+		private int nextIndex;
+
+		public ListIterator() {
+			this.next = head;
+		}
+
+		public Object next() {
+			lastReturned = next;
+			this.next = next.next;
+			nextIndex++;
+			return lastReturned.data;
+		}
+
+		public boolean hasNext() {
+			return nextIndex < size();
+		}
+
+		public void add(Object input) {
+			Node newNode = new Node(input);
+
+			if (lastReturned == null) {
+				head = newNode;
+				head.next = next;
+			} else {
+				lastReturned.next = newNode;
+				newNode.next = next;
+			}
+			lastReturned = newNode;
+			nextIndex++;
+			size++;
+		}
+		
+		public void remove() {
+			if (nextIndex == 0) {
+				throw new IllegalStateException();
+			}
+			LinkedList.this.remove(nextIndex - 1);
+		}
+
 	}
 }
